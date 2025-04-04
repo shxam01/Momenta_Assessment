@@ -7,12 +7,7 @@ import librosa.display
 from data_utils import load_protocol_file, get_dataset_paths
 
 def analyze_dataset_balance(protocol_dir):
-    """
-    Analyze class balance in each dataset split
     
-    Args:
-        protocol_dir: Directory containing protocol files
-    """
     splits = ['train', 'dev', 'eval']
     file_names = {
         'train': 'ASVspoof2019.LA.cm.train.trn.txt',
@@ -31,7 +26,7 @@ def analyze_dataset_balance(protocol_dir):
             print(f"Skipping {split} split - could not load data")
             continue
             
-        # Count bonafide and spoof samples
+
         bonafide_count = sum(data['label'] == 0)
         spoof_count = sum(data['label'] == 1)
         total = len(data)
@@ -54,15 +49,8 @@ def analyze_dataset_balance(protocol_dir):
     plt.show()
 
 def visualize_audio_samples(audio_base_dir, protocol_dir, num_samples=3):
-    """
-    Visualize waveforms and spectrograms of a few samples from each class
     
-    Args:
-        audio_base_dir: Base directory for audio files
-        protocol_dir: Directory containing protocol files
-        num_samples: Number of samples to visualize per class
-    """
-    # Get train protocol file 
+    #  train protocol file 
     train_protocol = os.path.join(protocol_dir, 'ASVspoof2019.LA.cm.train.trn.txt')
     train_audio_dir = os.path.join(audio_base_dir, 'ASVspoof2019_LA_train/flac')
     
@@ -71,7 +59,7 @@ def visualize_audio_samples(audio_base_dir, protocol_dir, num_samples=3):
         print("Could not load training data for visualization")
         return
         
-    # Get random samples from each class
+    #  random samples from each class
     bonafide_samples = data[data['label'] == 0].sample(num_samples)
     spoof_samples = data[data['label'] == 1].sample(num_samples)
     
@@ -105,14 +93,8 @@ def visualize_audio_samples(audio_base_dir, protocol_dir, num_samples=3):
     plt.show()
 
 def duration_analysis(audio_base_dir, protocol_dir):
-    """
-    Analyze audio file durations
     
-    Args:
-        audio_base_dir: Base directory for audio files
-        protocol_dir: Directory containing protocol files
-    """
-    # Get train protocol file 
+    
     train_protocol = os.path.join(protocol_dir, 'ASVspoof2019.LA.cm.train.trn.txt')
     train_audio_dir = os.path.join(audio_base_dir, 'ASVspoof2019_LA_train/flac')
     
@@ -121,7 +103,7 @@ def duration_analysis(audio_base_dir, protocol_dir):
         print("Could not load training data for duration analysis")
         return
         
-    # Calculate durations
+    
     durations = []
     for _, row in data.iterrows():
         audio_path = os.path.join(train_audio_dir, f"{row['file_name']}.flac")
@@ -130,7 +112,7 @@ def duration_analysis(audio_base_dir, protocol_dir):
             duration = len(audio) / sr
             durations.append(duration)
     
-    # Plot duration distribution
+   
     plt.figure(figsize=(10, 6))
     plt.hist(durations, bins=30)
     plt.title('Audio File Duration Distribution')
@@ -147,7 +129,7 @@ def duration_analysis(audio_base_dir, protocol_dir):
     print(f"  Median: {np.median(durations):.2f} seconds")
 
 def run_eda(base_dir):
-    """Run all EDA functions"""
+   
     paths = get_dataset_paths(base_dir)
     
     print("Analyzing dataset balance...")
