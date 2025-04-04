@@ -29,7 +29,7 @@ def plot_training_history(history):
     plt.show()
 
 def plot_roc_curve(y_true, y_scores):
-    """Plot ROC curve"""
+    """ ROC curve"""
     fpr, tpr, thresholds = roc_curve(y_true, y_scores, pos_label=1)
     auc = np.trapz(tpr, fpr)
     
@@ -45,7 +45,7 @@ def plot_roc_curve(y_true, y_scores):
     plt.show()
 
 def plot_confusion_matrix(y_true, y_pred):
-    """Plot confusion matrix"""
+    """confusion matrix"""
     cm = confusion_matrix(y_true, y_pred)
     
     plt.figure(figsize=(8, 6))
@@ -58,7 +58,7 @@ def plot_confusion_matrix(y_true, y_pred):
     plt.xticks(tick_marks, classes, rotation=45)
     plt.yticks(tick_marks, classes)
     
-    # Add text annotations
+    # text annotations
     fmt = 'd'
     thresh = cm.max() / 2.
     for i in range(cm.shape[0]):
@@ -74,7 +74,7 @@ def plot_confusion_matrix(y_true, y_pred):
     plt.show()
 
 def visualize_spectrograms(audio_files, feature_extractor, predictions=None, num_samples=3):
-    """Visualize spectrograms of a few audio samples"""
+    """Visualizing spectrograms of a few audio samples"""
     plt.figure(figsize=(15, num_samples * 4))
     
     for i, audio_path in enumerate(audio_files[:num_samples]):
