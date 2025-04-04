@@ -12,11 +12,11 @@ class FeatureExtractor:
         self.freq_bins = self.n_fft // 2 + 1
 
     def extract_spectrogram(self, audio_path):
-        """Extract log spectrogram features from an audio file"""
+        
         try:
             waveform, sr = librosa.load(audio_path, sr=self.sample_rate)
             
-            # Pad or truncate waveform to match duration * sample_rate exactly
+           
             target_samples = int(self.duration * self.sample_rate)
             if len(waveform) > target_samples:
                 waveform = waveform[:target_samples]
@@ -28,7 +28,7 @@ class FeatureExtractor:
             log_spectrogram = np.log1p(spectrogram)
             log_spectrogram = log_spectrogram.T  # shape: (time, freq)
 
-            # Ensure the time dimension matches target_length due to potential rounding differences
+            
             current_time_steps = log_spectrogram.shape[0]
             if current_time_steps > self.target_length:
                 log_spectrogram = log_spectrogram[:self.target_length, :]
@@ -36,7 +36,7 @@ class FeatureExtractor:
                 pad_width = self.target_length - current_time_steps
                 log_spectrogram = np.pad(log_spectrogram, ((0, pad_width), (0, 0)), mode='constant')
 
-            # Ensure frequency dimension is correct
+            
             if log_spectrogram.shape[1] != self.freq_bins:
                 if log_spectrogram.shape[1] > self.freq_bins:
                     log_spectrogram = log_spectrogram[:, :self.freq_bins]
