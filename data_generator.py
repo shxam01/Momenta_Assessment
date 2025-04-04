@@ -6,20 +6,7 @@ from feature_extraction import FeatureExtractor
 
 def data_generator(protocol_file, audio_folder_path, feature_extractor, batch_size=32, 
                    is_eval=False, sample_fraction=0.4):
-    """
-    Create a tf.data.Dataset for the audio files
     
-    Args:
-        protocol_file: Path to protocol file
-        audio_folder_path: Path to audio folder
-        feature_extractor: FeatureExtractor instance
-        batch_size: Batch size
-        is_eval: Whether this is evaluation data
-        sample_fraction: Fraction of data to use (0.0-1.0)
-        
-    Returns:
-        tf.data.Dataset
-    """
     # Load protocol data
     data = pandas.read_csv(protocol_file, sep='\s+', header=None, engine='python')
     
@@ -32,16 +19,16 @@ def data_generator(protocol_file, audio_folder_path, feature_extractor, batch_si
     else:
         raise ValueError(f"Unexpected number of columns ({len(data.columns)}) in protocol file: {protocol_file}")
     
-    # Sample the data if needed
+    # Data index
     if sample_fraction < 1.0:
         # Stratified sampling to maintain class distribution
         np.random.seed(42)  # For reproducibility
         
-        # Get indices for bonafide and spoof samples
+        # Bonafide and spoof index
         bonafide_idx = data[data['label'] == 0].index
         spoof_idx = data[data['label'] == 1].index
         
-        # Sample from each class
+        
         sampled_bonafide = np.random.choice(bonafide_idx, 
                                          size=int(len(bonafide_idx) * sample_fraction),
                                          replace=False)
@@ -49,10 +36,10 @@ def data_generator(protocol_file, audio_folder_path, feature_extractor, batch_si
                                       size=int(len(spoof_idx) * sample_fraction),
                                       replace=False)
         
-        # Combine sampled indices
+        # Combined sampled indices
         sampled_indices = np.concatenate([sampled_bonafide, sampled_spoof])
         
-        # Sample the data
+        # DATA SAMPLE
         data = data.loc[sampled_indices].reset_index(drop=True)
         
         print(f"Using {len(data)} samples ({sample_fraction*100:.1f}% of original dataset)")
