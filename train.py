@@ -29,7 +29,7 @@ def train_model(train_ds, dev_ds, eval_ds, input_shape, batch_size=16, num_epoch
         history: Training history
         eval_results: Evaluation results tuple
     """
-    # Build model
+    # model
     from model import build_resmax
     model = build_resmax(input_shape=input_shape, num_classes=2)
     model.summary()
@@ -61,7 +61,7 @@ def train_model(train_ds, dev_ds, eval_ds, input_shape, batch_size=16, num_epoch
         verbose=1
     )
     
-    # Train model
+    # Training model
     print("Starting training...")
     history = model.fit(
         train_ds,
@@ -70,14 +70,14 @@ def train_model(train_ds, dev_ds, eval_ds, input_shape, batch_size=16, num_epoch
         callbacks=[lr_reducer, early_stopper, checkpoint]
     )
     
-    # Evaluate on dev set (EER/AUC)
+    # Evaluate\ion on dev set (EER/AUC)
     print("Evaluating on development set...")
     y_true_dev = []
     y_scores_dev = []
     
     for specs, labels in dev_ds:
         logits = model.predict(specs)
-        probs = tf.nn.softmax(logits, axis=1).numpy()[:, 1]  # Get probability of spoof class
+        probs = tf.nn.softmax(logits, axis=1).numpy()[:, 1]  # probability of spoof class
         y_scores_dev.extend(probs)
         y_true_dev.extend(labels.numpy())
         
@@ -89,12 +89,12 @@ def train_model(train_ds, dev_ds, eval_ds, input_shape, batch_size=16, num_epoch
     eer_dev = compute_eer(y_true_dev, y_scores_dev)
     print(f"Development Set AUC: {auc_dev:.4f}, EER: {eer_dev:.2f}%")
     
-    # Evaluate on evaluation set (loss/accuracy)
+    # Evaluation on evaluation set (loss/accuracy)
     print("Evaluating on evaluation set...")
     eval_loss, eval_acc = model.evaluate(eval_ds)
     print(f"Evaluation Set Loss: {eval_loss:.4f}, Accuracy: {eval_acc*100:.2f}%")
     
-    # Calculate EER/AUC on evaluation set if labels are available
+    # Calculateion EER/AUC on evaluation set if labels are available
     y_true_eval = []
     y_scores_eval = []
     
