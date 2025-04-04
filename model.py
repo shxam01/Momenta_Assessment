@@ -23,28 +23,24 @@ class MaxFeatureMap(layers.Layer):
         return tuple(shape)
 
 def res_block(input_tensor, filters, stride=1):
-    """Residual block with MFM activation"""
-    # --- Main Path ---
-    # First Conv block changes dimensions if stride != 1
+    
     x = layers.Conv2D(filters * 2, kernel_size=3, strides=stride, padding='same', use_bias=False)(input_tensor)
     x = layers.BatchNormalization()(x)
     x = MaxFeatureMap()(x)  # Output channels = filters
 
-    # Second Conv block always has stride 1
+
     x = layers.Conv2D(filters * 2, kernel_size=3, strides=1, padding='same', use_bias=False)(x)
     x = layers.BatchNormalization()(x) # Shape just before potential Add: (batch, height, width, filters * 2)
 
-    # --- Shortcut Path ---
+    
     shortcut = input_tensor
     input_channels_static = input_tensor.shape[-1] # Get static channel dimension if available
 
-    # Determine if projection is needed:
-    # 1. If stride is not 1, dimensions change, so projection is needed.
-    # 2. If stride is 1, but input channels don't match the channels of 'x' before Add (which is filters * 2), projection is needed.
+   
     needs_projection = False
     if stride != 1:
         needs_projection = True
-    # Check channel mismatch only if static shape is known
+    
     if input_channels_static is not None and input_channels_static != (filters * 2):
         needs_projection = True
 
@@ -53,17 +49,15 @@ def res_block(input_tensor, filters, stride=1):
         shortcut = layers.Conv2D(filters * 2, kernel_size=1, strides=stride, padding='same', use_bias=False)(input_tensor)
         shortcut = layers.BatchNormalization()(shortcut)
 
-    # --- Add ---
-    # Now both x and shortcut should have shape (..., filters * 2)
+   
     x = layers.Add()([x, shortcut])
 
-    # --- Final Activation ---
-    # Apply MFM after adding. Output channels = filters
+   
     x = MaxFeatureMap()(x)
     return x
 
 def build_resmax(input_shape, num_classes=2):
-    """Build the ResMax model for audio spoofing detection"""
+    
     inputs = layers.Input(shape=input_shape)
     
     # Initial Conv Layer (Output channels must be even for MFM; 64 is fine)
